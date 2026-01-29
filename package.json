@@ -1,0 +1,24 @@
+{
+  "name": "fantastic-barnacle-devops",
+  "version": "1.0.0",
+  "description": "Spring 2026 CIS-486",
+  "homepage": "https://github.com/ArunArdor/fantastic-barnacle-devops#readme",
+  "bugs": {
+    "url": "https://github.com/ArunArdor/fantastic-barnacle-devops/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArunArdor/fantastic-barnacle-devops.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {}
+}
