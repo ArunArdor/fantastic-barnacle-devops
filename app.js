@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { readFile } from 'fs/promises';  // For async file reading
 import { MongoClient , ServerApiVersion} from 'mongodb';
+import mongoose from 'mongoose';
 
 // const { MongoClient, ServerApiVersion } = require('mongodb');
 //const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -21,34 +22,19 @@ const myVar = 'injected from server'; // Declare your variable
 app.use(express.static(join(__dirname, 'public')));
 app.use(express.json()); 
 
-
-
- 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-serverApi: {
-version: ServerApiVersion.v1,
-strict: true,
-deprecationErrors: true,
-}
-});
- 
 async function run() {
-try {
-// Connect the client to the server	(optional starting in v4.7)
-await client.connect();
-// Send a ping to confirm a successful connection
-await client.db("admin").command({ ping: 1 });
-console.log("Pinged your deployment. You successfully connected to MongoDB!");
-} finally {
-// Ensures that the client will close when you finish/error
-await client.close();
-}
+  try {
+    // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
+    await mongoose.connect(process.env.MONGO_URI, {dbName: 'fantastic'});
+    
+    console.log("Connected to MongoDB");
+    console.log("Database: ", mongoose.connection.name);
+  } catch (err) {
+    console.error('MongoDB connection error: ', err);
+    process.exit(1);
+  }
 }
 run().catch(console.dir);
-
-
-
 
 // middlewares aka endpoints aka 'get to slash' {http verb} to slash {you name ur endpoint}
 app.get('/', (req, res) => {
