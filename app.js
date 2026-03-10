@@ -1,11 +1,13 @@
-//app.mjs
+//app.js
 //we are in ES6, use this. 
 import 'dotenv/config'; 
+import dns from 'node:dns';
+dns.setServers(['1.1.1.1', '8.8.8.8']);
+
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { readFile } from 'fs/promises';  // For async file reading
-import { MongoClient , ServerApiVersion} from 'mongodb';
 import mongoose from 'mongoose';
 
 // const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -15,8 +17,8 @@ import mongoose from 'mongoose';
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const uri = process.env.MONGO_URI;
-const myVar = 'injected from server'; // Declare your variable
+
+const PORT = process.env.PORT || 3000;
 
 
 app.use(express.static(join(__dirname, 'public')));
@@ -35,6 +37,16 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+// MongoDB schema (structure of data in database)
+const attendeeSchema = new mongoose.Schema({
+  name: String,
+  status: String
+});
+
+// MongoDB model
+const Attendee = mongoose.model("Attendee", attendeeSchema);
+
 
 // middlewares aka endpoints aka 'get to slash' {http verb} to slash {you name ur endpoint}
 app.get('/', (req, res) => {
@@ -80,10 +92,64 @@ app.post('/api/body', (req, res) => {
   res.json({"message": req.body.name});
 });
 
+app.post('/api/attendees', async (req, res) => {
+  try {
+    const attendee = await Attendee.create({
+      name: req.body.name,
+      status: req.body.status || "present"
+    });
 
+    res.status(201).json(attendee);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+app.get('/api/attendees', async (req, res) => {
+  try {
+    const attendees = await Attendee.find();
+    res.status(200).json(attendees);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/attendees/:id', async (req, res) => {
+  try {
+    const updated = await Attendee.findByIdAndUpdate(
+      req.params.id,
+      {
+        name: req.body.name,
+        status: req.body.status
+      },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: 'Attendee not found' });
+    }
+
+    res.status(200).json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/attendees/:id', async (req, res) => {
+  try {
+    const deleted = await Attendee.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Attendee not found' });
+    }
+
+    res.status(200).json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 //start the server. 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000')
-})
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
