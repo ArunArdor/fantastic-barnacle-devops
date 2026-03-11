@@ -4,258 +4,698 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Player Attendance</title>
+  <title>SpikeTrack — UNA Volleyball</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css/normalize.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
   <style>
+    :root {
+      --ink: #05080f;
+      --deep: #0b1120;
+      --electric: #2d6cff;
+      --gold: #f5c842;
+      --fog: #8fa3cc;
+      --light: #e8eeff;
+      --border: rgba(255, 255, 255, 0.07);
+    }
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
     body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--ink);
+      color: var(--light);
+      overflow-x: hidden;
     }
 
-    .container {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 100%, rgba(23, 64, 166, 0.28) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 30% at 85% 15%, rgba(245, 200, 66, 0.07) 0%, transparent 55%),
+        linear-gradient(160deg, #05080f 0%, #0b1120 60%, #07111e 100%);
     }
 
-    h1,
-    h2 {
-      color: #333;
+    .net-pattern {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.035;
+      pointer-events: none;
+      background-image: linear-gradient(60deg, rgba(45, 108, 255, 1) 1px, transparent 1px), linear-gradient(-60deg, rgba(45, 108, 255, 1) 1px, transparent 1px);
+      background-size: 40px 70px, 40px 70px;
     }
 
-    .class-info {
-      background: #e8f4fd;
-      border-left: 4px solid #2196F3;
+    .court-glow {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 1;
+      background: linear-gradient(90deg, transparent 5%, var(--electric) 30%, var(--gold) 50%, var(--electric) 70%, transparent 95%);
+      box-shadow: 0 0 40px 6px rgba(45, 108, 255, 0.3);
     }
 
-    .form-group {
-      margin-bottom: 15px;
+    .ball-bg {
+      position: fixed;
+      right: -100px;
+      top: 50%;
+      transform: translateY(-60%);
+      width: 520px;
+      height: 520px;
+      z-index: 0;
+      opacity: 0.05;
+      animation: spin 22s linear infinite;
     }
 
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
+    @keyframes spin {
+      to {
+        transform: translateY(-60%) rotate(360deg);
+      }
     }
 
-    input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
+    nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 56px;
+      border-bottom: 1px solid var(--border);
     }
 
-    button {
-      background: #2196F3;
-      color: white;
-      padding: 10px 20px;
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.9rem;
+      letter-spacing: 4px;
+    }
+
+    .logo b {
+      color: var(--gold);
+      font-weight: 400;
+    }
+
+    .nav-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--fog);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+    }
+
+    .btn-nav {
+      background: var(--electric);
+      color: #fff;
       border: none;
-      border-radius: 4px;
+      padding: 11px 26px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
       cursor: pointer;
-      font-size: 16px;
-      margin-right: 10px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(45, 108, 255, 0.35);
     }
 
-    button:hover {
-      background: #1976D2;
+    .btn-nav:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(45, 108, 255, 0.5);
     }
 
-    .delete-btn {
-      background: #f44336;
+    .hero {
+      position: relative;
+      z-index: 5;
+      padding: 90px 56px 60px;
+      max-width: 700px;
     }
 
-    .delete-btn:hover {
-      background: #d32f2f;
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(245, 200, 66, 0.2);
+      background: rgba(245, 200, 66, 0.06);
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      animation: up 0.7s ease both;
     }
 
-    .edit-btn {
-      background: #ff9800;
+    .dot {
+      width: 5px;
+      height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: blink 1.6s ease infinite;
     }
 
-    .edit-btn:hover {
-      background: #f57c00;
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.2
+      }
     }
 
-    .message {
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 4px;
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4.5rem, 12vw, 8.5rem);
+      line-height: 0.88;
+      letter-spacing: 1px;
+      margin-bottom: 28px;
+      animation: up 0.7s 0.08s ease both;
     }
 
-    .success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
+    .hero h1 .outline {
+      -webkit-text-stroke: 2px var(--electric);
+      color: transparent;
     }
 
-    .error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--fog);
+      line-height: 1.75;
+      max-width: 500px;
+      margin-bottom: 44px;
+      animation: up 0.7s 0.16s ease both;
     }
 
-    .record {
-      background: #f8f9fa;
-      padding: 10px;
-      margin: 5px 0;
-      border-radius: 4px;
-      border: 1px solid #dee2e6;
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      animation: up 0.7s 0.24s ease both;
     }
 
-    #attendanceList {
-      max-height: 400px;
-      overflow-y: auto;
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--electric);
+      color: #fff;
+      border: none;
+      padding: 16px 34px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 6px 28px rgba(45, 108, 255, 0.4);
+    }
+
+    .btn-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px rgba(45, 108, 255, 0.55);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: transparent;
+      color: var(--fog);
+      border: 1px solid var(--border);
+      padding: 16px 30px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .btn-ghost:hover {
+      color: var(--light);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .stats {
+      position: relative;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat {
+      padding: 28px 40px;
+      border-right: 1px solid var(--border);
+      animation: up 0.6s ease both;
+    }
+
+    .stat:last-child {
+      border-right: none;
+    }
+
+    .stat-n {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem;
+      color: var(--light);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-n em {
+      color: var(--electric);
+      font-style: normal;
+    }
+
+    .stat-l {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.67rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--fog);
+    }
+
+    .features {
+      position: relative;
+      z-index: 5;
+      padding: 80px 56px;
+    }
+
+    .section-kicker {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--electric);
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: 1px;
+      margin-bottom: 44px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .feat {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      transition: all 0.22s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feat::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--electric), transparent);
+      opacity: 0;
+      transition: opacity 0.22s;
+    }
+
+    .feat:hover {
+      transform: translateY(-5px);
+      border-color: rgba(45, 108, 255, 0.25);
+    }
+
+    .feat:hover::after {
+      opacity: 1;
+    }
+
+    .feat-icon {
+      font-size: 1.8rem;
+      margin-bottom: 14px;
+    }
+
+    .feat h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .feat p {
+      font-size: 0.875rem;
+      color: var(--fog);
+      line-height: 1.65;
+    }
+
+    @keyframes up {
+      from {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(5, 8, 15, 0.85);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .login-box {
+      background: #0e1525;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 22px;
+      padding: 48px 44px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+      transform: scale(0.93) translateY(14px);
+      transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+      position: relative;
+    }
+
+    .overlay.open .login-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: none;
+      color: var(--fog);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .close-btn:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+    }
+
+    .login-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 4px;
+      color: var(--fog);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-logo b {
+      color: var(--gold);
+      font-weight: 400;
+    }
+
+    .login-box h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 1px;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .login-box .sub {
+      text-align: center;
+      color: var(--fog);
+      font-size: 0.875rem;
+      margin-bottom: 34px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--fog);
+      margin-bottom: 8px;
+    }
+
+    .field input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 15px;
+      color: var(--light);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--electric);
+      background: rgba(45, 108, 255, 0.07);
+      box-shadow: 0 0 0 3px rgba(45, 108, 255, 0.13);
+    }
+
+    .field input::placeholder {
+      color: rgba(143, 163, 204, 0.35);
+    }
+
+    .login-err {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 0.83rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .btn-signin {
+      width: 100%;
+      background: var(--electric);
+      color: #fff;
+      border: none;
+      padding: 15px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: all 0.22s;
+      box-shadow: 0 6px 24px rgba(45, 108, 255, 0.35);
+    }
+
+    .btn-signin:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(45, 108, 255, 0.5);
+    }
+
+    @media (max-width: 700px) {
+      nav {
+        padding: 16px 20px;
+      }
+
+      .nav-tag {
+        display: none;
+      }
+
+      .hero {
+        padding: 50px 20px 40px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features {
+        padding: 50px 20px;
+      }
+
+      .login-box {
+        margin: 16px;
+        padding: 36px 24px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <!-- Class Information Section -->
-  <div class="container class-info">
-    <h1>Volleyball Practice Check-in</h1>
-    <div id="classInfo">
-      <h3>UNA Volleyball Group</h3>
-      <p><strong>Purpose:</strong> Track who shows up for practice</p>
-      <p><strong>Database:</strong> MongoDB Atlas</p>
+
+  <div class="bg"></div>
+  <div class="net-pattern"></div>
+  <div class="court-glow"></div>
+
+  <svg class="ball-bg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="96" fill="none" stroke="white" stroke-width="2.5" />
+    <path d="M100 4 Q165 55 100 100 Q35 55 100 4" fill="none" stroke="white" stroke-width="2" />
+    <path d="M100 196 Q165 145 100 100 Q35 145 100 196" fill="none" stroke="white" stroke-width="2" />
+    <path d="M4 100 Q55 35 100 100 Q55 165 4 100" fill="none" stroke="white" stroke-width="2" />
+    <path d="M196 100 Q145 35 100 100 Q145 165 196 100" fill="none" stroke="white" stroke-width="2" />
+  </svg>
+
+  <nav>
+    <div class="logo">Spike<b>Track</b></div>
+    <div class="nav-tag">UNA Volleyball · Spring 2026</div>
+    <button class="btn-nav" onclick="openLogin()">🔐 Player Login</button>
+  </nav>
+
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> Live Attendance Tracker</div>
+    <h1>SHOW UP.<br><span class="outline">GET SEEN.</span></h1>
+    <p>SpikeTrack keeps every practice accountable. Log in, check in, and let your coaches know you're ready to work.
+    </p>
+    <div class="cta-row">
+      <button class="btn-cta" onclick="openLogin()">✅ Check In Now</button>
+      <button class="btn-ghost" onclick="openLogin()">View Roster →</button>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-n">24<em>/26</em></div>
+      <div class="stat-l">Avg Attendance</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">98<em>%</em></div>
+      <div class="stat-l">Season Rate</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">142</div>
+      <div class="stat-l">Practices Logged</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">3<em>×</em></div>
+      <div class="stat-l">Weekly Sessions</div>
     </div>
   </div>
 
-  <!-- Attendance Form -->
-  <div class="container">
-    <h2>Student Attendance</h2>
-    <div id="message"></div>
-
-    <form id="attendanceForm">
-      <div class="form-group">
-        <label for="studentName">Player Name:</label>
-        <input type="text" id="studentName" required>
+  <section class="features">
+    <div class="section-kicker">// Why SpikeTrack</div>
+    <div class="section-title">Built for the Court</div>
+    <div class="feature-grid">
+      <div class="feat">
+        <div class="feat-icon">⚡</div>
+        <h3>Instant Check-In</h3>
+        <p>Log attendance in seconds before warmups. No paper, no friction.</p>
       </div>
-
-      <div class="form-group">
-        <label for="status">Practice Status:</label>
-        <input type="text" id="status" required placeholder="checked-in">
+      <div class="feat">
+        <div class="feat-icon">📋</div>
+        <h3>Live Roster</h3>
+        <p>See who's present, late, or absent — updated the moment players check in.</p>
       </div>
+      <div class="feat">
+        <div class="feat-icon">✏️</div>
+        <h3>Edit Anytime</h3>
+        <p>Update a player's status or fix a mistake right from the roster page.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🔒</div>
+        <h3>Login Required</h3>
+        <p>Only signed-in players can submit records, keeping the data clean.</p>
+      </div>
+    </div>
+  </section>
 
-      <button type="submit">Record Attendance</button>
-      <button type="button" onclick="loadAttendance()">Refresh List</button>
-    </form>
-  </div>
-
-  <!-- Attendance Records -->
-  <div class="container">
-    <h2>Attendance Records</h2>
-    <div id="attendanceList">Loading attendance records...</div>
+  <div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+    <div class="login-box" id="loginBox">
+      <button class="close-btn" onclick="closeLogin()">✕</button>
+      <div class="login-logo">Spike<b>Track</b></div>
+      <h2>Welcome Back</h2>
+      <div class="sub">Sign in to check in for today's practice</div>
+      <div class="login-err" id="loginErr">⚠️ Please fill in both fields.</div>
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="uname" placeholder="Enter any username" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="upass" placeholder="Enter any password" autocomplete="current-password">
+      </div>
+      <button class="btn-signin" onclick="handleLogin()">Sign In & Check In →</button>
+    </div>
   </div>
 
   <script>
-    let editingId = null;
-
-    document.getElementById('attendanceForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const studentName = document.getElementById('studentName').value;
-      const status = document.getElementById('status').value;
-
-      try {
-        const url = editingId ? `/api/attendees/${editingId}` : '/api/attendees';
-        const method = editingId ? 'PUT' : 'POST';
-
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: studentName,
-            status: status
-          })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          showMessage(editingId ? 'Attendance updated successfully' : 'Attendance recorded successfully', 'success');
-          document.getElementById('attendanceForm').reset();
-          editingId = null;
-          document.querySelector('button[type="submit"]').textContent = 'Record Attendance';
-          loadAttendance();
-        } else {
-          showMessage(result.error || 'Something went wrong', 'error');
-        }
-      } catch (error) {
-        showMessage('Error submitting form', 'error');
+    function openLogin() {
+      document.getElementById('overlay').classList.add('open');
+      setTimeout(() => document.getElementById('uname').focus(), 350);
+    }
+    function closeLogin() {
+      document.getElementById('overlay').classList.remove('open');
+    }
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('overlay')) closeLogin();
+    }
+    function handleLogin() {
+      const u = document.getElementById('uname').value.trim();
+      const p = document.getElementById('upass').value.trim();
+      const err = document.getElementById('loginErr');
+      if (!u || !p) {
+        err.style.display = 'block';
+        setTimeout(() => err.style.display = 'none', 3000);
+        return;
       }
+      sessionStorage.setItem('st_user', u);
+      window.location.href = 'checkin.html';
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLogin();
+      if (e.key === 'Enter' && document.getElementById('overlay').classList.contains('open')) handleLogin();
     });
-
-    async function loadAttendance() {
-      try {
-        const response = await fetch('/api/attendees');
-        const records = await response.json();
-
-        const listDiv = document.getElementById('attendanceList');
-
-        if (!records.length) {
-          listDiv.innerHTML = '<p>No attendance records yet.</p>';
-          return;
-        }
-
-        listDiv.innerHTML = records.map(record => `
-        <div class="record">
-          <strong>${record.name}</strong><br>
-          <small>Practice Status: ${record.status}</small><br>
-          <button class="edit-btn" onclick="editRecord('${record._id}', '${record.name}', '${record.status}')">Edit</button>
-          <button class="delete-btn" onclick="deleteRecord('${record._id}')">Delete</button>
-        </div>
-      `).join('');
-      } catch (error) {
-        document.getElementById('attendanceList').innerHTML = 'Error loading attendance records';
-      }
-    }
-
-    function editRecord(id, name, status) {
-      editingId = id;
-      document.getElementById('studentName').value = name;
-      document.getElementById('status').value = status;
-      document.querySelector('button[type="submit"]').textContent = 'Update Attendance';
-      showMessage('Editing record - click Update to save changes', 'success');
-    }
-
-    async function deleteRecord(id) {
-      if (!confirm('Are you sure you want to delete this record?')) return;
-
-      try {
-        const response = await fetch(`/api/attendees/${id}`, {
-          method: 'DELETE'
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          showMessage(result.message, 'success');
-          loadAttendance();
-        } else {
-          showMessage(result.error || 'Delete failed', 'error');
-        }
-      } catch (error) {
-        showMessage('Error deleting record', 'error');
-      }
-    }
-
-    function showMessage(text, type) {
-      const messageDiv = document.getElementById('message');
-      messageDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
-      setTimeout(() => {
-        messageDiv.innerHTML = '';
-      }, 3000);
-    }
-
-    loadAttendance();
   </script>
+
+  <footer style="text-align:center; padding:20px; color:#8fa3cc; font-size:0.8rem;">
+    Built by Arun Batta · UNA Volleyball · Spring 2026
+  </footer>
+  
 </body>
 
 </html>
