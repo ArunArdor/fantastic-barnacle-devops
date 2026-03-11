@@ -1,6 +1,6 @@
 //app.js
 //we are in ES6, use this. 
-import 'dotenv/config'; 
+import 'dotenv/config';
 import dns from 'node:dns';
 dns.setServers(['1.1.1.1', '8.8.8.8']);
 
@@ -22,13 +22,13 @@ const PORT = process.env.PORT || 3000;
 
 
 app.use(express.static(join(__dirname, 'public')));
-app.use(express.json()); 
+app.use(express.json());
 
 async function run() {
   try {
     // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
-    await mongoose.connect(process.env.MONGO_URI, {dbName: 'fantastic'});
-    
+    await mongoose.connect(process.env.MONGO_URI, { dbName: 'fantastic' });
+
     console.log("Connected to MongoDB");
     console.log("Database: ", mongoose.connection.name);
   } catch (err) {
@@ -52,7 +52,7 @@ const Attendee = mongoose.model("Attendee", attendeeSchema);
 app.get('/', (req, res) => {
   // res.send('Hello Express'); //string response
   // res.sendFile('index.html'); // <- this don't work w/o imports, assign, and arguements
-  res.sendFile(join(__dirname, 'public', 'index.html')) ;
+  res.sendFile(join(__dirname, 'public', 'index.html'));
 
 })
 
@@ -69,27 +69,27 @@ app.get('/inject', (req, res) => {
     });
 })
 
-app.get('/api/json', (req, res) =>{
+app.get('/api/json', (req, res) => {
   const myVar = 'Hello from server!';
   res.json({ myVar });
 })
 
 app.get('/api/query', (req, res) => {
-  console.log("client request with query param:", req.query.name); 
-  res.json({"message": req.query.name});
+  console.log("client request with query param:", req.query.name);
+  res.json({ "message": req.query.name });
 });
 
 app.get('/api/url/:iaddasfsd', (req, res) => {
 
-  console.log("client request with URL param:", req.params.iaddasfsd); 
-  res.json({"message": `Hi, ${req.params.iaddasfsd}. How are you?`});
+  console.log("client request with URL param:", req.params.iaddasfsd);
+  res.json({ "message": `Hi, ${req.params.iaddasfsd}. How are you?` });
 });
 
 
 app.post('/api/body', (req, res) => {
   // console.log("the body:", req.body); 
-  console.log("client request with body:", req.body.name); 
-  res.json({"message": req.body.name});
+  console.log("client request with body:", req.body.name);
+  res.json({ "message": req.body.name });
 });
 
 app.post('/api/attendees', async (req, res) => {
