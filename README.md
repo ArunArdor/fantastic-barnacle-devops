@@ -10,7 +10,7 @@ This project was built for the **CIS 486 course** and demonstrates a full-stack 
 
 ---
 
-## 🌐 Live Application
+## 🌐 Live Applications
 
 https://fantastic.barrycumbie.com
 
